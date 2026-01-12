@@ -4,3 +4,4 @@ metadata.jsonl
 texts/
 pdfs/
 .venv/
+.env
