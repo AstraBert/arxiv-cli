@@ -26,3 +26,8 @@ format-check:
 version-bump:
 	$(info ****************** bumping version in package.json and Cargo.toml ******************)
 	python3 scripts/version_bump.py
+
+npm-publish:
+	$(info ****************** login and publish to npm ******************)
+	$(info ****************** meant for manual usage ******************)
+	bash scripts/login_and_publish_to_npm.sh
