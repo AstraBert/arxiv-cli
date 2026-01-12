@@ -2,6 +2,11 @@
 name = "arxiv-cli"
 version = "0.1.0"
 edition = "2024"
+license-file = "LICENSE"
+readme = "README.md"
+repository = "https://github.com/AstraBert/arxiv-cli"
+description = "CLI to download papers from arXiv."
+keywords = ["arxiv", "papers", "research", "cli"]
 
 [dependencies]
 anyhow = "1.0.100"
