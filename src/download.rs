@@ -117,7 +117,7 @@ pub async fn download_arxiv_papers(
             paper.write_summary(&path)?;
         }
     }
-    if jsonl_text != "" {
+    if !jsonl_text.is_empty() {
         fs::write(JSON_FILE, &jsonl_text)?;
     }
     Ok(())
