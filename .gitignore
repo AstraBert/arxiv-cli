@@ -1,0 +1,6 @@
+/target
+Cargo.lock
+metadata.jsonl
+texts/
+pdfs/
+.venv/
