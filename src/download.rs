@@ -1,7 +1,24 @@
-use std::{fs, os::unix::fs::FileExt};
+use std::{fs, io::Write};
 
 use arxiv::{Arxiv, ArxivQueryBuilder};
 use serde::{Deserialize, Serialize};
+
+/// Sanitize a filename to be Windows-compatible
+fn sanitize_filename(name: &str) -> String {
+    // Replace invalid Windows filename characters with underscores
+    let invalid_chars = ['<', '>', ':', '"', '/', '\\', '|', '?', '*'];
+    let mut sanitized = name.to_string();
+    for ch in invalid_chars {
+        sanitized = sanitized.replace(ch, "_");
+    }
+    // Trim leading/trailing whitespace and dots
+    sanitized = sanitized.trim().trim_end_matches('.').to_string();
+    // Limit filename length to 200 characters to be safe
+    if sanitized.len() > 200 {
+        sanitized.truncate(200);
+    }
+    sanitized
+}
 
 const JSON_FILE: &str = "metadata.jsonl";
 const PDF_DIRECTORY: &str = "pdfs/";
@@ -47,8 +64,8 @@ impl SerDesArxiv {
         } else {
             format!("{}.pdf", out_path)
         };
-        let file = fs::File::create(out_path)?;
-        file.write_all_at(&body, 0)?;
+        let mut file = fs::File::create(out_path)?;
+        file.write_all(&body)?;
         Ok(())
     }
 
@@ -78,14 +95,14 @@ impl SerDesArxiv {
 }
 
 pub async fn download_arxiv_papers(
-    category: String,
+    search_query: String,
     num_results: i32,
     save_metadata: bool,
     save_pdfs: bool,
     save_summaries: bool,
 ) -> anyhow::Result<()> {
     let query = ArxivQueryBuilder::new()
-        .search_query(&format!("cat:{}", category))
+        .search_query(&search_query)
         .start(0)
         .max_results(num_results)
         .sort_by("submittedDate")
@@ -105,7 +122,8 @@ pub async fn download_arxiv_papers(
             if !pdf_dir_exists {
                 fs::create_dir(PDF_DIRECTORY)?;
             }
-            let path = format!("{}/{}", PDF_DIRECTORY, &paper.title);
+            let sanitized_title = sanitize_filename(&paper.title);
+            let path = format!("{}/{}", PDF_DIRECTORY, sanitized_title);
             paper.fetch_pdf(&path).await?;
         }
         if save_summaries {
@@ -113,7 +131,8 @@ pub async fn download_arxiv_papers(
             if !txt_dir_exists {
                 fs::create_dir(TEXT_DIRECTORY)?;
             }
-            let path = format!("{}/{}.txt", TEXT_DIRECTORY, &paper.title);
+            let sanitized_title = sanitize_filename(&paper.title);
+            let path = format!("{}/{}.txt", TEXT_DIRECTORY, sanitized_title);
             paper.write_summary(&path)?;
         }
     }
