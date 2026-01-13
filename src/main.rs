@@ -1,19 +1,17 @@
 mod download;
 
 use crate::download::download_arxiv_papers;
-use clap::{Parser, command};
+use clap::Parser;
 
-/// Download the most recent arbitrary
-/// number of papers belonging to a
-/// specific category from arXiv.
+/// Download papers from arXiv by category or search query.
 #[derive(Parser, Debug)]
-#[command(version = "0.1.0")]
+#[command(version = "1.0.0")]
 #[command(name = "arxiv-cli")]
 #[command(about, long_about = None)]
 struct Args {
-    /// The category of the papers
+    /// Search query (e.g., "graphrag", "machine learning")
     #[arg(short, long)]
-    category: String,
+    query: String,
 
     /// The maximum number of papers to fetch
     #[arg(short, long, default_value_t = 5)]
@@ -35,8 +33,9 @@ struct Args {
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let args = Args::parse();
+
     download_arxiv_papers(
-        args.category,
+        args.query,
         args.limit,
         !args.no_metadata,
         args.pdf,
