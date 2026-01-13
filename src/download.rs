@@ -3,23 +3,6 @@ use std::{fs, io::Write};
 use arxiv::{Arxiv, ArxivQueryBuilder};
 use serde::{Deserialize, Serialize};
 
-/// Sanitize a filename to be Windows-compatible
-fn sanitize_filename(name: &str) -> String {
-    // Replace invalid Windows filename characters with underscores
-    let invalid_chars = ['<', '>', ':', '"', '/', '\\', '|', '?', '*'];
-    let mut sanitized = name.to_string();
-    for ch in invalid_chars {
-        sanitized = sanitized.replace(ch, "_");
-    }
-    // Trim leading/trailing whitespace and dots
-    sanitized = sanitized.trim().trim_end_matches('.').to_string();
-    // Limit filename length to 200 characters to be safe
-    if sanitized.len() > 200 {
-        sanitized.truncate(200);
-    }
-    sanitized
-}
-
 const JSON_FILE: &str = "metadata.jsonl";
 const PDF_DIRECTORY: &str = "pdfs/";
 const TEXT_DIRECTORY: &str = "texts/";
@@ -94,6 +77,23 @@ impl SerDesArxiv {
     }
 }
 
+/// Sanitize a filename to be Windows-compatible
+fn sanitize_filename(name: &str) -> String {
+    // Replace invalid Windows filename characters with underscores
+    let invalid_chars = ['<', '>', ':', '"', '/', '\\', '|', '?', '*'];
+    let mut sanitized = name.to_string();
+    for ch in invalid_chars {
+        sanitized = sanitized.replace(ch, "_");
+    }
+    // Trim leading/trailing whitespace and dots
+    sanitized = sanitized.trim().trim_end_matches('.').to_string();
+    // Limit filename length to 200 characters to be safe
+    if sanitized.len() > 200 {
+        sanitized.truncate(200);
+    }
+    sanitized
+}
+
 pub async fn download_arxiv_papers(
     search_query: String,
     num_results: i32,
@@ -160,7 +160,7 @@ mod test {
         if Path::new(JSON_FILE).exists() {
             fs::remove_file(JSON_FILE).expect("Should be able to remove metadata.jsonl file");
         }
-        let result = download_arxiv_papers("cs.CL".to_string(), 5, true, false, false).await;
+        let result = download_arxiv_papers("cat:cs.CL".to_string(), 5, true, false, false).await;
         match result {
             Ok(_) => {}
             Err(e) => {
@@ -188,7 +188,7 @@ mod test {
         if Path::new(JSON_FILE).exists() {
             fs::remove_file(JSON_FILE).expect("Should be able to remove metadata.jsonl file");
         }
-        let result = download_arxiv_papers("cs.CL".to_string(), 2, false, true, false).await;
+        let result = download_arxiv_papers("cat:cs.CL".to_string(), 2, false, true, false).await;
         match result {
             Ok(_) => {}
             Err(e) => {
@@ -224,7 +224,7 @@ mod test {
         if Path::new(JSON_FILE).exists() {
             fs::remove_file(JSON_FILE).expect("Should be able to remove metadata.jsonl file");
         }
-        let result = download_arxiv_papers("cs.CL".to_string(), 2, false, false, true).await;
+        let result = download_arxiv_papers("cat:cs.CL".to_string(), 2, false, false, true).await;
         match result {
             Ok(_) => {}
             Err(e) => {
@@ -263,7 +263,7 @@ mod test {
         if Path::new(JSON_FILE).exists() {
             fs::remove_file(JSON_FILE).expect("Should be able to remove metadata.jsonl file");
         }
-        let result = download_arxiv_papers("cs.CL".to_string(), 2, true, true, true).await;
+        let result = download_arxiv_papers("cat:cs.CL".to_string(), 2, true, true, true).await;
         match result {
             Ok(_) => {}
             Err(e) => {
@@ -342,5 +342,19 @@ mod test {
         };
         let json_content = serde_json::to_string(&paper).expect("Should be able to serialize");
         assert!(!json_content.contains("summary"));
+    }
+
+    #[test]
+    fn test_sanitize_file_name() {
+        let to_replace = "x < y | x > y? better: /, \"\\\" or *".to_string();
+        let to_truncate = "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dictas sunt".to_string();
+        assert_eq!(
+            sanitize_filename(&to_replace),
+            "x _ y _ x _ y_ better_ _, ___ or _"
+        );
+        assert_eq!(
+            sanitize_filename(&to_truncate),
+            "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dictas"
+        );
     }
 }
