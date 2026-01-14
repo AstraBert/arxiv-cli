@@ -5,3 +5,7 @@ texts/
 pdfs/
 .venv/
 .env
+# Go build artifacts
+*.exe
+arxiv-cli
+bin/
