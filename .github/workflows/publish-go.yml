@@ -2,7 +2,7 @@ name: Release Go App
 on:
   push:
     tags:
-      - "go@v*"
+      - "v*"
 
 permissions:
   contents: read # for checkout
