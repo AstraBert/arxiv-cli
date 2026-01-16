@@ -19,9 +19,9 @@ var (
 
 func main() {
 	rootCmd := &cobra.Command{
-		Use:   "arxiv-cli",
-		Short: "Download papers from arXiv by category or search query",
-		Long:  "Intuitive command-line tool to download the most recent number of papers belonging a specific category from arXiv.",
+		Use:     "arxiv-cli",
+		Short:   "Download papers from arXiv by category or search query",
+		Long:    "Intuitive command-line tool to download the most recent number of papers belonging a specific category from arXiv.",
 		Version: "1.0.0",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if query == "" {

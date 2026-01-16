@@ -1,0 +1,11 @@
+builds:
+  - binary: arxiv-cli
+    main: ./cmd/arxiv-cli
+    dir: .
+    goos:
+      - windows
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64

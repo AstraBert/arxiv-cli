@@ -9,3 +9,4 @@ pdfs/
 *.exe
 arxiv-cli
 bin/
+dist/

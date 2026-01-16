@@ -49,7 +49,7 @@ func TestArxivPaperWriteSummary(t *testing.T) {
 
 	outPath := "test_summary.txt"
 	t.Cleanup(func() {
-		os.Remove(outPath)
+		_ = os.Remove(outPath)
 	})
 
 	if err := paper.WriteSummary(outPath); err != nil {
@@ -100,15 +100,15 @@ func TestDownloadArxivPapersIntegration(t *testing.T) {
 
 	// Clean up any existing files/directories
 	t.Cleanup(func() {
-		os.Remove(JSONFile)
-		os.RemoveAll(PDFDirectory)
-		os.RemoveAll(TextDirectory)
+		_ = os.Remove(JSONFile)
+		_ = os.RemoveAll(PDFDirectory)
+		_ = os.RemoveAll(TextDirectory)
 	})
 
 	// Remove existing files before test
-	os.Remove(JSONFile)
-	os.RemoveAll(PDFDirectory)
-	os.RemoveAll(TextDirectory)
+	_ = os.Remove(JSONFile)
+	_ = os.RemoveAll(PDFDirectory)
+	_ = os.RemoveAll(TextDirectory)
 
 	ctx := testingContext(t)
 	err := DownloadArxivPapers(ctx, "cat:cs.CL", 2, true, false, false)
@@ -137,14 +137,14 @@ func TestDownloadArxivPapersPDFs(t *testing.T) {
 	}
 
 	t.Cleanup(func() {
-		os.Remove(JSONFile)
-		os.RemoveAll(PDFDirectory)
-		os.RemoveAll(TextDirectory)
+		_ = os.Remove(JSONFile)
+		_ = os.RemoveAll(PDFDirectory)
+		_ = os.RemoveAll(TextDirectory)
 	})
 
-	os.Remove(JSONFile)
-	os.RemoveAll(PDFDirectory)
-	os.RemoveAll(TextDirectory)
+	_ = os.Remove(JSONFile)
+	_ = os.RemoveAll(PDFDirectory)
+	_ = os.RemoveAll(TextDirectory)
 
 	ctx := testingContext(t)
 	err := DownloadArxivPapers(ctx, "cat:cs.CL", 2, false, true, false)
@@ -181,14 +181,14 @@ func TestDownloadArxivPapersSummaries(t *testing.T) {
 	}
 
 	t.Cleanup(func() {
-		os.Remove(JSONFile)
-		os.RemoveAll(PDFDirectory)
-		os.RemoveAll(TextDirectory)
+		_ = os.Remove(JSONFile)
+		_ = os.RemoveAll(PDFDirectory)
+		_ = os.RemoveAll(TextDirectory)
 	})
 
-	os.Remove(JSONFile)
-	os.RemoveAll(PDFDirectory)
-	os.RemoveAll(TextDirectory)
+	_ = os.Remove(JSONFile)
+	_ = os.RemoveAll(PDFDirectory)
+	_ = os.RemoveAll(TextDirectory)
 
 	ctx := testingContext(t)
 	err := DownloadArxivPapers(ctx, "cat:cs.CL", 2, false, false, true)
@@ -225,14 +225,14 @@ func TestDownloadArxivPapersAll(t *testing.T) {
 	}
 
 	t.Cleanup(func() {
-		os.Remove(JSONFile)
-		os.RemoveAll(PDFDirectory)
-		os.RemoveAll(TextDirectory)
+		_ = os.Remove(JSONFile)
+		_ = os.RemoveAll(PDFDirectory)
+		_ = os.RemoveAll(TextDirectory)
 	})
 
-	os.Remove(JSONFile)
-	os.RemoveAll(PDFDirectory)
-	os.RemoveAll(TextDirectory)
+	_ = os.Remove(JSONFile)
+	_ = os.RemoveAll(PDFDirectory)
+	_ = os.RemoveAll(TextDirectory)
 
 	ctx := testingContext(t)
 	err := DownloadArxivPapers(ctx, "cat:cs.CL", 2, true, true, true)

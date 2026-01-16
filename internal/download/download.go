@@ -15,10 +15,10 @@ import (
 )
 
 const (
-	JSONFile     = "metadata.jsonl"
-	PDFDirectory = "pdfs/"
+	JSONFile      = "metadata.jsonl"
+	PDFDirectory  = "pdfs/"
 	TextDirectory = "texts/"
-	arxivAPIBase = "http://export.arxiv.org/api/query"
+	arxivAPIBase  = "http://export.arxiv.org/api/query"
 )
 
 type ArxivPaper struct {
@@ -102,7 +102,7 @@ func (p *ArxivPaper) FetchPDF(ctx context.Context, outPath string) error {
 	if err != nil {
 		return fmt.Errorf("failed to fetch PDF: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("failed to fetch PDF: HTTP %d", resp.StatusCode)
@@ -116,7 +116,7 @@ func (p *ArxivPaper) FetchPDF(ctx context.Context, outPath string) error {
 	if err != nil {
 		return fmt.Errorf("failed to create file: %w", err)
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	_, err = io.Copy(file, resp.Body)
 	if err != nil {
@@ -160,7 +160,7 @@ func fetchArxivPapers(ctx context.Context, searchQuery string, numResults int) (
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch from arXiv API: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("arXiv API returned HTTP %d", resp.StatusCode)
