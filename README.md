@@ -8,6 +8,9 @@ Intuitive command-line tool to download the most recent number of papers belongi
 # with npm
 npm install @cle-does-things/arxiv-cli
 
+# with go install
+go install github.com/AstraBert/arxiv-cli/cmd/arxiv-cli@latest
+
 # with cargo
 cargo install arxiv-cli
 ```
